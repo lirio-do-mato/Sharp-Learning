@@ -1,0 +1,18 @@
+@font-face {
+	font-family: 'League Spartan';
+	src: url(../../fonts/league-spartan/LeagueSpartan-Bold.otf)
+}
+
+.fundo{
+    margin: auto;
+    width: 100%;
+}
+
+h1, h2{
+    font-family: 'League Spartan';
+    padding: 10px;
+    padding-top: 15px;
+}
+h1{
+    font-size: clamp(1em, 2em, 3em);
+}
