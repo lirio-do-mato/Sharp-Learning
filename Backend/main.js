@@ -5,10 +5,10 @@ require('dotenv').config();
 const sql = require("mssql");
 const {urlencoded, json} = require("body-parser");
 const strConn = 
-    `Server=;`+
-    `Database=;`+
-    `User Id=;`+
-    `Password=`; //decidir bd
+    `Server=regulus.cotuca.unicamp.br;`+ //process.env.DB_SERVER
+    `Database=BD19185;`+ //process.env.DB_BASE
+    `User Id=BD19185;`+ //process.env.DB_USER
+    `Password=Cotuca PD 19`; //process.env.DB_PASSWORD
 
 //console.log(strConn);
 sql.connect(strConn)
@@ -48,3 +48,18 @@ function executeQuery(sql, res) {
       .catch(e => res.json(e));
 };
 
+router.get("/teste", (req, res) => 
+    executeQuery(`select * from Paciente`, res)
+);
+
+router.post('/addUsersInfo', (req, res) => {
+    let nome = req.body.nome;
+    let idade = req.body.idade;
+    let local = req.body.local;
+    let ocupacao = req.body.ocupacao;
+    let educacao = req.body.educacao;
+    let toca = req.body.toca;
+    executeQuery(`INSERT INTO tcc_infoQuestionados VALUES('${nome}', '${idade}', '${local}', '${ocupacao}', '${educacao}', '${toca}')`, res);
+});
+
+app.use("/", router);
