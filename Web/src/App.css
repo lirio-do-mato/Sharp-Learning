@@ -1,0 +1,24 @@
+@font-face {
+	font-family: 'Glacial Indifference';
+	src: url(./fonts/glacial-indifference/GlacialIndifference-Regular.otf)
+}
+
+body{
+    background-color: #efebe2;
+    color: #ab1d79;
+    font-family: 'Glacial Indifference';
+    font-size: 2rem;
+    text-align: center;
+    margin: auto;
+}
+
+@font-face {
+	font-family: 'League Spartan';
+	src: url(./fonts/league-spartan/LeagueSpartan-Bold.otf)
+}
+
+h1, h2{
+    font-family: 'League Spartan';
+    font-weight: 300;
+    margin: auto;
+}
