@@ -1,3 +1,4 @@
+var cors = require("cors");
 const express = require("express");
 const app = express();
 const port = 3001;
@@ -17,7 +18,7 @@ sql.connect(strConn)
 
 app.use(urlencoded({extended: true}));
 app.use(json());
-
+app.use(cors());
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
@@ -44,17 +45,7 @@ function executeQuery(sql, res) {
     global.conn
       .request()
       .query(sql)
-      .then(result => {
-        let obj = result.recordset[0];
-        let ret = obj[""];
-        console.log(ret);
-        if(ret == 1) {
-            res.status(200);
-            res.json(result.recordset[0]);
-        } else 
-        {
-            res.status(404);
-        }})
+      .then(result => res.json(result.recordset))
       .catch(e => res.json(e));
 };
 
@@ -69,7 +60,7 @@ router.post('/addUsersInfo', (req, res) => {
     let ocupacao = req.body.ocupacao;
     let educacao = req.body.educacao;
     let toca = req.body.toca;
-    executeQuery(`INSERT INTO tcc_infoQuestionados VALUES('${nome}', '${idade}', '${local}', '${ocupacao}', '${educacao}', '${toca}')`, res);
+    return executeQuery(`INSERT INTO tcc_infoQuestionados VALUES('${nome}', '${idade}', '${local}', '${ocupacao}', '${educacao}', '${toca}')`, res);
 });
 
 router.post('/answerColors', (req, res) => {
@@ -113,7 +104,7 @@ router.post('/answerColors', (req, res) => {
     let perguntaFuncao10 = req.body.perguntaFuncao10;
     let perguntaFuncao11 = req.body.perguntaFuncao11;
     let perguntaFuncao12 = req.body.perguntaFuncao12;
-    executeQuery(`INSERT INTO tcc_respostasCores VALUES('${id}', '${perguntaNota1}', '${perguntaNota2}', '${perguntaNota3}', '${perguntaNota4}', '${perguntaNota5}', '${perguntaNota6}', '${perguntaNota7}', '${perguntaNota8}', '${perguntaNota9}', '${perguntaNota10}', '${perguntaNota11}', '${perguntaNota12}', '${perguntaNota13}', '${perguntaNota14}', '${perguntaNota15}', '${perguntaAcorde1}', '${perguntaAcorde2}', '${perguntaAcorde3}', '${perguntaAcorde4}', '${perguntaAcorde5}', '${perguntaAcorde6}', '${perguntaAcorde7}', '${perguntaAcorde8}', '${perguntaAcorde9}', '${perguntaAcorde10}', '${perguntaAcorde11}', '${perguntaAcorde12}', '${perguntaFuncao1}', '${perguntaFuncao2}', '${perguntaFuncao3}', '${perguntaFuncao4}', '${perguntaFuncao5}', '${perguntaFuncao6}', '${perguntaFuncao7}', '${perguntaFuncao8}', '${perguntaFuncao9}', '${perguntaFuncao10}', '${perguntaFuncao11}', '${perguntaFuncao12}')`, res);
+    return executeQuery(`INSERT INTO tcc_respostasCores VALUES('${id}', '${perguntaNota1}', '${perguntaNota2}', '${perguntaNota3}', '${perguntaNota4}', '${perguntaNota5}', '${perguntaNota6}', '${perguntaNota7}', '${perguntaNota8}', '${perguntaNota9}', '${perguntaNota10}', '${perguntaNota11}', '${perguntaNota12}', '${perguntaNota13}', '${perguntaNota14}', '${perguntaNota15}', '${perguntaAcorde1}', '${perguntaAcorde2}', '${perguntaAcorde3}', '${perguntaAcorde4}', '${perguntaAcorde5}', '${perguntaAcorde6}', '${perguntaAcorde7}', '${perguntaAcorde8}', '${perguntaAcorde9}', '${perguntaAcorde10}', '${perguntaAcorde11}', '${perguntaAcorde12}', '${perguntaFuncao1}', '${perguntaFuncao2}', '${perguntaFuncao3}', '${perguntaFuncao4}', '${perguntaFuncao5}', '${perguntaFuncao6}', '${perguntaFuncao7}', '${perguntaFuncao8}', '${perguntaFuncao9}', '${perguntaFuncao10}', '${perguntaFuncao11}', '${perguntaFuncao12}')`, res);
 });
 
 router.post('/addUsers', (req, res) => {
@@ -124,7 +115,7 @@ router.post('/addUsers', (req, res) => {
     const educacao = req.body.educacao;
     const toca = req.body.toca;
     const senha = req.body.senha;
-    executeQuery(`INSERT INTO tcc_Usuarios VALUES('${nome}', '${idade}', '${email}', '${educacao}', '${toca}', '${senha}')`, res);
+    return executeQuery(`INSERT INTO tcc_Usuarios VALUES('${nome}', '${idade}', '${email}', '${educacao}', '${toca}', '${senha}')`, res);
 });
 
 app.use("/", router);
