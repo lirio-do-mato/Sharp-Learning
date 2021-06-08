@@ -44,7 +44,17 @@ function executeQuery(sql, res) {
     global.conn
       .request()
       .query(sql)
-      .then(result => res.json(result.recordset))
+      .then(result => {
+        let obj = result.recordset[0];
+        let ret = obj[""];
+        console.log(ret);
+        if(ret == 1) {
+            res.status(200);
+            res.json(result.recordset[0]);
+        } else 
+        {
+            res.status(404);
+        }})
       .catch(e => res.json(e));
 };
 
