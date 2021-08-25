@@ -1,0 +1,47 @@
+.Titulo-esquerda{
+    margin-top: 150px;
+    margin-left: 100px;
+    margin-right: 900px;
+}
+
+.Texto-esquerda{
+    margin-top: 150px;
+    margin-left: 100px;
+    margin-right: 900px;
+    background-color: #d0c3f1;
+    border-color: #4e2780;
+    border-width: 8px;
+    border-style: solid;
+    border-radius: 5px;
+}
+
+p{
+    color: black;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+}
+
+h1{
+    color: black;
+}
+
+.Titulo-direita{
+    margin-top: -600px;
+    margin-left: 900px;
+    margin-right: 100px;
+}
+
+.Texto-direita{
+    margin-top: 100px;
+    margin-left: 900px;
+    margin-right: 100px;
+    background-color: #d0c3f1;
+    border-color: #4e2780;
+    border-width: 8px;
+    border-style: solid;
+    border-radius: 5px;
+}
+
+.Pesquisa-esquerda{
+    
+}
