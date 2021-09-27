@@ -1,15 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
 import React, { useState }  from 'react';
 import { SafeAreaView, ScrollView, StatusBar, Button, StyleSheet, Text, TextInput, useColorScheme, View, TouchableOpacity,} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors, DebugInstructions, Header, LearnMoreLinks, ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import RNPickerSelect from "react-native-picker-select";
 
 //css
 const styles = StyleSheet.create({
@@ -56,25 +51,11 @@ const styles = StyleSheet.create({
   },
 }); 
 
-//variaveis com os dados do usuario
-/*var nome;
-function setNome(n){ alert("entrou");nome=n; }
-var idade;
-function setIdade(i){ idade=i; }
-var email;
-function setEmail(n){ email=n; }
-var instrumento;
-function setInstrumento(n){ instrumento=n; }
-var educacao
-function setEducacao(n){ educacao=n; }
-var senha;
-function setSenha(n){ senha=n; }
-var senha2;
-function setSenha2(n){ senha2=n; }*/
-
 //stack navigator para mudar de telas
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
+//Função que realiza o cadastro
 function send(nome, idade, email, senha, senha2) {
   if(nome == '')//verifica se o nome é nulo
     alert("Preencha o seu nome");
@@ -104,7 +85,7 @@ function send(nome, idade, email, senha, senha2) {
                 headers: {
                   'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
+                body: JSON.stringify({//transforma as variaveis em JSON
                   nome: nome,
                   idade: idade,
                   email: email,
@@ -112,9 +93,9 @@ function send(nome, idade, email, senha, senha2) {
                 })
               })
               .then(res => res.text())
-              .then(
+              .then(//se cadastrou
                 data => {alert("Usuario cadastrado com sucesso"); 
-                navigation.navigate('Home');
+                navigation.navigate('Home');//vai para home
               })
               .catch(erro => {alert(erro)})
             }
@@ -125,23 +106,93 @@ function send(nome, idade, email, senha, senha2) {
   }
 }
 
-function HomeScreen({ navigation }) {
+//Função que realiza o login
+function SignIn(nome, idade, email, senha, senha2) {
+  if(email == '')//verifica se o email é nulo
+    alert("Preencha o seu email");
+  else{
+    if(senha == '')//verifica se a senha é nula
+      alert("Preencha a sua senha");
+    else
+    {
+          fetch('http://143.106.202.159:3001/getUsers', { //ip da maquina que roda o server
+            method: 'get',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+          .then(res => res.text())
+          .then(
+            data => {alert("chegou"); 
+            navigation.navigate('Home');//vai para home
+          })
+          .catch(erro => {alert(erro)})
+    }  
+  }
+}
+
+function search(inst){
+  
+}
+
+function HomePage({ navigation }) {
+  React.useEffect(() => navigation.addListener('beforeRemove', (e) => {
+    e.preventDefault();
+  }));
+  return(
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="HomeScreen" component={HomeScreen} />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  )
+}
+
+function SignPage({ navigation }) {
+  return(
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Tab.Screen name="SignInScreen" component={SignInScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  )
+}
+
+function SettingsScreen() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
-        /*style={{color:'Red'} }*/
-      />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Settings!</Text>
     </View>
   );
 }
 
+function HomeScreen({ navigation }) {
+  const [ inst, setInst ] = useState("");
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Instrumento: </Text>
+      <RNPickerSelect
+          onValueChange={(inst) => setInst(inst)}
+          items={[
+              { label: "JavaScript", value: "JavaScript" },
+              { label: "TypeStript", value: "TypeStript" },
+              { label: "Python", value: "Python" },
+              { label: "Java", value: "Java" },
+              { label: "C++", value: "C++" },
+              { label: "C", value: "C" },
+          ]}
+      />
+      <Button
+        title="Pesquisar"
+        onPress={() => Serch(inst)}
+      />
+    </View>
+  );
+}
+ 
 function SignUpScreen({ navigation }) {
-  React.useEffect(() =>navigation.addListener('beforeRemove', (e) => {
-    e.preventDefault();
-  }));
   const [nome, setNome] = useState('');
   const [idade, setIdade] = useState('');
   const [email, setEmail] = useState('');
@@ -156,7 +207,7 @@ function SignUpScreen({ navigation }) {
         <TextInput style={styles.sectionDescription} name="senha" secureTextEntry={true} placeholder="Senha" onChangeText={senha => setSenha(senha)} defaultValue={senha}/>
         <TextInput style={styles.sectionDescription} name="confirmeSenha" secureTextEntry={true} placeholder="Confirme a Senha" onChangeText={senha2 => setSenha2(senha2)} defaultValue={senha2}/>
         <View style={styles.sectionAlign}>
-          <TouchableOpacity onPress={send(nome, idade, email, senha, senha2)} style={styles.roundButton1}>
+          <TouchableOpacity onPress={() => send(nome, idade, email, senha, senha2)} style={styles.roundButton1}>
             <Text style={styles.sectionButtonText}>Enviar</Text>
           </TouchableOpacity>
         </View>
@@ -165,12 +216,30 @@ function SignUpScreen({ navigation }) {
   );
 }
 
+function SignInScreen({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  return (
+    <View style={styles.background}>
+      <View>
+        <TextInput style={styles.sectionDescription} placeholder="Email" onChangeText={email => setEmail(email)} defaultValue={email}/>
+        <TextInput style={styles.sectionDescription} name="senha" secureTextEntry={true} placeholder="Senha" onChangeText={senha => setSenha(senha)} defaultValue={senha}/>
+        <View style={styles.sectionAlign}>
+          <TouchableOpacity onPress={() => SignIn(email, senha)} style={styles.roundButton1}>
+            <Text style={styles.sectionButtonText}>Enviar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+}
+ 
 function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="SignUp">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerBackVisible: false,title: 'Cadastro', }}/>
+        <Stack.Screen name="HomePage" component={HomePage} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
