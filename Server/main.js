@@ -40,6 +40,13 @@ app.use("/", router);
 app.listen(port);
 console.log("teste");
 
+const executeSQL = (sql, res) => {
+    global.conn.request()
+        .query(sql)
+        .then(result => res.json(result.recordset))
+        .catch(err => res.json(err));
+};
+
 function executeQuery(sql, res) {
     global.conn
       .request()
@@ -59,7 +66,11 @@ function executeQuery(sql, res) {
 };
 
 router.get("/teste", (req, res) => 
-    executeQuery(`select * from Paciente`, res)
+    executeSQL(`select * from Paciente`, res)
+);
+
+router.get("/getUsers", (req, res) => 
+    executeSQL(`select * from tcc_Usuarios`, res)
 );
 
 router.post('/addUsersInfo', (req, res) => {
@@ -117,7 +128,6 @@ router.post('/answerColors', (req, res) => {
 });
 
 router.post('/addUsers', (req, res) => {
-    console.log("entrou");
     const nome = req.body.nome;
     const idade = req.body.idade;
     const email = req.body.email;

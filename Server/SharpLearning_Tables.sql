@@ -56,12 +56,9 @@ constraint fk_idInfoQuestionado foreign key(idInfo) references tcc_infoQuestiona
 select * from tcc_respostasCores
 
 create table tcc_Usuarios (
-    id int primary key identity,
     nome varchar(100) not null,
 	idade int not null,
-	email varchar(100) not null,
-	educacao varchar(100) not null,
-	toca varchar(100) not null,
+	email varchar(100) primary key,
 	senha varchar(100) not null
 )
 
