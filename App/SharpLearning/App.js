@@ -1,11 +1,18 @@
+/*
+Install before running:
+npm install @react-navigation/native
+npm install react-native-screens react-native-safe-area-context
+npm install @react-navigation/native-stack
+npm install @react-navigation/bottom-tabs
+npm install uuid
+*/
 import React, { useState }  from 'react';
 import { SafeAreaView, ScrollView, StatusBar, Button, StyleSheet, Text, TextInput, useColorScheme, View, TouchableOpacity,} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors, DebugInstructions, Header, LearnMoreLinks, ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import RNPickerSelect from "react-native-picker-select";
-
+import { v4 as uuid } from "uuid";
 //css
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -56,7 +63,7 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 //Função que realiza o cadastro
-function send(nome, idade, email, senha, senha2) {
+function send({ navigation },nome, idade, email, senha, senha2) {
   if(nome == '')//verifica se o nome é nulo
     alert("Preencha o seu nome");
   else
@@ -80,7 +87,7 @@ function send(nome, idade, email, senha, senha2) {
               alert("As senhas devem ser iguais");
             else
             {
-              fetch('http://143.106.202.159:3001/addUsers', { //ip da maquina que roda o server
+              fetch('http://143.106.202.58:3001/addUsers', { //ip da maquina que roda o server
                 method: 'post',
                 headers: {
                   'Content-Type': 'application/json'
@@ -95,7 +102,7 @@ function send(nome, idade, email, senha, senha2) {
               .then(res => res.text())
               .then(//se cadastrou
                 data => {alert("Usuario cadastrado com sucesso"); 
-                navigation.navigate('Home');//vai para home
+                navigation.navigate('HomePage', { nome: nome, idade: idade, email: email, senha: senha });//vai para home
               })
               .catch(erro => {alert(erro)})
             }
@@ -107,7 +114,7 @@ function send(nome, idade, email, senha, senha2) {
 }
 
 //Função que realiza o login
-function SignIn(nome, idade, email, senha, senha2) {
+function SignIn({ navigation },email, senha) {
   if(email == '')//verifica se o email é nulo
     alert("Preencha o seu email");
   else{
@@ -115,48 +122,86 @@ function SignIn(nome, idade, email, senha, senha2) {
       alert("Preencha a sua senha");
     else
     {
-          fetch('http://143.106.202.159:3001/getUsers', { //ip da maquina que roda o server
+          fetch('http://143.106.202.58:3001/getUsers', { //ip da maquina que roda o server
             method: 'get',
             headers: {
               'Content-Type': 'application/json'
             },
           })
-          .then(res => res.text())
+          .then(res => res.json())
           .then(
-            data => {alert("chegou"); 
-            navigation.navigate('Home');//vai para home
+            data => {
+              var achouEmail = false;
+              var i = 0
+              for(; i < data.length && achouEmail==false; i++)
+                if(data[i].email==email)
+                  achouEmail=true;
+              if(achouEmail)
+                if(data[i].senha==senha)
+                  navigation.navigate('HomePage', { nome: data[i].nome, idade: data[i].idade, email: data[i].email, senha: data[i].senha});//vai para home
+                else
+                  alert("Senha incorreta");
+              else
+                alert("Nenhum usuario encontrado com esse email")
           })
           .catch(erro => {alert(erro)})
     }  
   }
 }
 
+/*const useFileDownloader = () => {
+  const [files, setFiles] = useState(() => []);
+
+  const download = (file) =>
+    setFiles((fileList) => [...fileList, { ...file, downloadId: uuid() }]);
+
+  const remove = (removeId) =>
+    setFiles((files) => [
+      ...files.filter((file) => file.downloadId !== removeId),
+    ]);
+
+  return [
+    (e) => download(e),
+    files.length > 0 ? (
+      <Downloader files={files} remove={(e) => remove(e)} />
+    ) : null,
+  ];
+};
+<ul className="list-group list-group-flush">
+  {files.map((file, idx) => (
+    <DownloadItem
+      key={idx}
+      removeFile={() => remove(file.downloadId)}
+      {...file}
+    />
+  ))}
+</ul>
+*/
+
+
 function search(inst){
   
 }
 
-function HomePage({ navigation }) {
+function HomePage({ route, navigation }) {
   React.useEffect(() => navigation.addListener('beforeRemove', (e) => {
     e.preventDefault();
   }));
+  const { nome, idade, email, senha } = route.params;
   return(
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="HomeScreen" component={HomeScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator>
+      <Tab.Screen name="HomeScreen" component={HomeScreen} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+    </Tab.Navigator>
   )
 }
 
 function SignPage({ navigation }) {
   return(
-    <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen name="SignUpScreen" component={SignUpScreen} />
         <Tab.Screen name="SignInScreen" component={SignInScreen} />
       </Tab.Navigator>
-    </NavigationContainer>
   )
 }
 
@@ -173,17 +218,7 @@ function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Instrumento: </Text>
-      <RNPickerSelect
-          onValueChange={(inst) => setInst(inst)}
-          items={[
-              { label: "JavaScript", value: "JavaScript" },
-              { label: "TypeStript", value: "TypeStript" },
-              { label: "Python", value: "Python" },
-              { label: "Java", value: "Java" },
-              { label: "C++", value: "C++" },
-              { label: "C", value: "C" },
-          ]}
-      />
+
       <Button
         title="Pesquisar"
         onPress={() => Serch(inst)}
@@ -207,7 +242,7 @@ function SignUpScreen({ navigation }) {
         <TextInput style={styles.sectionDescription} name="senha" secureTextEntry={true} placeholder="Senha" onChangeText={senha => setSenha(senha)} defaultValue={senha}/>
         <TextInput style={styles.sectionDescription} name="confirmeSenha" secureTextEntry={true} placeholder="Confirme a Senha" onChangeText={senha2 => setSenha2(senha2)} defaultValue={senha2}/>
         <View style={styles.sectionAlign}>
-          <TouchableOpacity onPress={() => send(nome, idade, email, senha, senha2)} style={styles.roundButton1}>
+          <TouchableOpacity onPress={() => send({navigation}, nome, idade, email, senha, senha2)} style={styles.roundButton1}>
             <Text style={styles.sectionButtonText}>Enviar</Text>
           </TouchableOpacity>
         </View>
@@ -225,7 +260,7 @@ function SignInScreen({ navigation }) {
         <TextInput style={styles.sectionDescription} placeholder="Email" onChangeText={email => setEmail(email)} defaultValue={email}/>
         <TextInput style={styles.sectionDescription} name="senha" secureTextEntry={true} placeholder="Senha" onChangeText={senha => setSenha(senha)} defaultValue={senha}/>
         <View style={styles.sectionAlign}>
-          <TouchableOpacity onPress={() => SignIn(email, senha)} style={styles.roundButton1}>
+          <TouchableOpacity onPress={() => SignIn({ navigation },email, senha)} style={styles.roundButton1}>
             <Text style={styles.sectionButtonText}>Enviar</Text>
           </TouchableOpacity>
         </View>
@@ -237,9 +272,9 @@ function SignInScreen({ navigation }) {
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SignUp">
-        <Stack.Screen name="HomePage" component={HomePage} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Navigator initialRouteName="SignPage">
+        <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }}/>
+        <Stack.Screen name="SignPage" component={SignPage} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
