@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   background: {
-      backgroundColor: '#46424A',
   },
   sectionTitle: {
     color:'#F7F4EB',
@@ -29,7 +28,6 @@ const styles = StyleSheet.create({
   },
   sectionDescription: {
     paddingTop: 8,
-    color: '#F7F4EB',
     paddingHorizontal: 10,
     fontSize: 16,
     fontWeight: '400',
@@ -39,7 +37,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',  
-    backgroundColor: '#46424A',
   },
   roundButton1: {
     width: 125,
@@ -87,7 +84,7 @@ function send({ navigation },nome, idade, email, senha, senha2) {
               alert("As senhas devem ser iguais");
             else
             {
-              fetch('http://143.106.202.58:3001/addUsers', { //ip da maquina que roda o server
+              fetch('http://192.168.15.44:3001/addUsers', { //ip da maquina que roda o server
                 method: 'post',
                 headers: {
                   'Content-Type': 'application/json'
@@ -122,7 +119,7 @@ function SignIn({ navigation },email, senha) {
       alert("Preencha a sua senha");
     else
     {
-          fetch('http://143.106.202.58:3001/getUsers', { //ip da maquina que roda o server
+          fetch('http://192.168.15.44:3001/getUsers', { //ip da maquina que roda o server
             method: 'get',
             headers: {
               'Content-Type': 'application/json'
