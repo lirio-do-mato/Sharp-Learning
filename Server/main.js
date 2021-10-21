@@ -73,6 +73,10 @@ router.get("/getUsers", (req, res) =>
     executeSQL(`select * from tcc_Usuarios`, res)
 );
 
+router.get("/getTxts", (req, res) => 
+    executeSQL(`select * from tcc_Txt`, res)
+);
+
 router.post('/addUsersInfo', (req, res) => {
     let nome = req.body.nome;
     let idade = req.body.idade;
@@ -133,6 +137,58 @@ router.post('/addUsers', (req, res) => {
     const email = req.body.email;
     const senha = req.body.senha;
     executeQuery(`INSERT INTO tcc_Usuarios VALUES('${nome}', '${idade}', '${email}', '${senha}')`, res);
+});
+
+router.post('/addForm5', (req, res) => {
+    const email = req.body.email;
+    const desc = req.body.desc;
+    const p1 = req.body.p1;
+    const p2 = req.body.p2;
+    const p3 = req.body.p3;
+    const p4 = req.body.p4;
+    const p5 = req.body.p5;
+    executeQuery(`INSERT INTO tcc_Form5Questoes VALUES('${email}', '${desc}', '${p1}', '${p2}', '${p3}', '${p4}', '${p5}')`, res);
+});
+
+router.post('/addResp5', (req, res) => {
+    const email = req.body.email;
+    const p1 = req.body.p1;
+    const p2 = req.body.p2;
+    const p3 = req.body.p3;
+    const p4 = req.body.p4;
+    const p5 = req.body.p5;
+    executeQuery(`INSERT INTO tcc_Resposta5Questoes VALUES('${email}', '${p1}', '${p2}', '${p3}', '${p4}', '${p5}')`, res);
+});
+
+router.post('/addForm10', (req, res) => {
+    const email = req.body.email;
+    const desc = req.body.desc;
+    const p1 = req.body.p1;
+    const p2 = req.body.p2;
+    const p3 = req.body.p3;
+    const p4 = req.body.p4;
+    const p5 = req.body.p5;
+    const p6 = req.body.p1;
+    const p7 = req.body.p2;
+    const p8 = req.body.p3;
+    const p9 = req.body.p4;
+    const p10 = req.body.p5;
+    executeQuery(`INSERT INTO tcc_Form10Questoes VALUES('${email}', '${desc}', '${p1}', '${p2}', '${p3}', '${p4}', '${p5}', '${p6}', '${p7}', '${p8}', '${p9}', '${p10}')`, res);
+});
+
+router.post('/addResp10', (req, res) => {
+    const email = req.body.email;
+    const p1 = req.body.p1;
+    const p2 = req.body.p2;
+    const p3 = req.body.p3;
+    const p4 = req.body.p4;
+    const p5 = req.body.p5;
+    const p6 = req.body.p1;
+    const p7 = req.body.p2;
+    const p8 = req.body.p3;
+    const p9 = req.body.p4;
+    const p10 = req.body.p5;
+    executeQuery(`INSERT INTO tcc_Resposta10Questoes VALUES('${email}', '${p1}', '${p2}', '${p3}', '${p4}', '${p5}', '${p6}', '${p7}', '${p8}', '${p9}', '${p10}')`, res);
 });
 
 app.use("/", router);
