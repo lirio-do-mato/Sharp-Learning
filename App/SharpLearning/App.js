@@ -5,10 +5,11 @@ npm install react-native-screens react-native-safe-area-context
 npm install @react-navigation/native-stack
 npm install @react-navigation/bottom-tabs
 npm install uuid
+npm install node-sass
 */
 import React, { useState }  from 'react';
 import { SafeAreaView, ScrollView, StatusBar, Button, StyleSheet, Text, TextInput, useColorScheme, View, TouchableOpacity,} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors, DebugInstructions, Header, LearnMoreLinks, ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -53,10 +54,10 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
-}); 
-
+});
 //stack navigator para mudar de telas
 const Stack = createNativeStackNavigator();
+const Stack2 = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 //Função que realiza o cadastro
@@ -99,7 +100,7 @@ function send({ navigation },nome, idade, email, senha, senha2) {
               .then(res => res.text())
               .then(//se cadastrou
                 data => {alert("Usuario cadastrado com sucesso"); 
-                navigation.navigate('HomePage', { nome: nome, idade: idade, email: email, senha: senha });//vai para home
+                navigation.navigate('MainNav', { nome: nome, idade: idade, email: email, senha: senha });//vai para home
               })
               .catch(erro => {alert(erro)})
             }
@@ -119,93 +120,102 @@ function SignIn({ navigation },email, senha) {
       alert("Preencha a sua senha");
     else
     {
-          fetch('http://192.168.15.44:3001/getUsers', { //ip da maquina que roda o server
-            method: 'get',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-          })
-          .then(res => res.json())
-          .then(
-            data => {
-              var achouEmail = false;
-              var i = 0
-              for(; i < data.length && achouEmail==false; i++)
-                if(data[i].email==email)
-                  achouEmail=true;
-              if(achouEmail)
-                if(data[i].senha==senha)
-                  navigation.navigate('HomePage', { nome: data[i].nome, idade: data[i].idade, email: data[i].email, senha: data[i].senha});//vai para home
-                else
-                  alert("Senha incorreta");
-              else
-                alert("Nenhum usuario encontrado com esse email")
-          })
-          .catch(erro => {alert(erro)})
+      fetch('http://192.168.15.44:3001/getUsers', { //ip da maquina que roda o server
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      .then(res => res.json())
+      .then(
+        data => {
+          var achouEmail = false;
+          var i = 0
+          for(; i < data.length && achouEmail==false; i++)
+            if(data[i].email==email)
+              achouEmail=true;
+          if(achouEmail)
+            if(data[i].senha==senha)
+              navigation.navigate('MainNav', { nome: data[i].nome, idade: data[i].idade, email: data[i].email, senha: data[i].senha});//vai para home
+            else
+              alert("Senha incorreta");
+          else
+            alert("Nenhum usuario encontrado com esse email")
+      })
+      .catch(erro => {alert(erro)})
     }  
   }
 }
-
-/*const useFileDownloader = () => {
-  const [files, setFiles] = useState(() => []);
-
-  const download = (file) =>
-    setFiles((fileList) => [...fileList, { ...file, downloadId: uuid() }]);
-
-  const remove = (removeId) =>
-    setFiles((files) => [
-      ...files.filter((file) => file.downloadId !== removeId),
-    ]);
-
-  return [
-    (e) => download(e),
-    files.length > 0 ? (
-      <Downloader files={files} remove={(e) => remove(e)} />
-    ) : null,
-  ];
-};
-<ul className="list-group list-group-flush">
-  {files.map((file, idx) => (
-    <DownloadItem
-      key={idx}
-      removeFile={() => remove(file.downloadId)}
-      {...file}
-    />
-  ))}
-</ul>
-*/
-
-
-function search(inst){
-  
+function search({ navigation }){
+  fetch('http://192.168.15.44:3001/getTxts', { //ip da maquina que roda o server
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
+  .then(res => res.json())
+  .then(data => {navigation.navigate('DefaultTexts', {info: data})})
+  .catch(erro => {alert(erro)})
 }
 
-function HomePage({ route, navigation }) {
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="MainNav">
+        <Stack.Screen name="MainNav" component={MainNav} options={{ headerShown: false }}/>
+        <Stack.Screen name="SignPage" component={SignPage} options={{ headerShown: false }}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function MainNav({ navigation }) {
   React.useEffect(() => navigation.addListener('beforeRemove', (e) => {
     e.preventDefault();
   }));
-  const { nome, idade, email, senha } = route.params;
-  return(
-    <Tab.Navigator>
-      <Tab.Screen name="HomeScreen" component={HomeScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
-    </Tab.Navigator>
-  )
+  return (
+    <Stack2.Navigator initialRouteName="Home">
+      <Stack2.Screen name="Home" component={HomeScreen}  />
+      <Stack2.Screen name="DefaultTexts" component={TextOpt} options={{ headerShown: false }}/>
+      <Stack2.Screen name="TextSpec" component={TextSpec} options={{ headerShown: false }}/>
+    </Stack2.Navigator>
+  );
 }
 
 function SignPage({ navigation }) {
   return(
-      <Tab.Navigator>
-        <Tab.Screen name="SignUpScreen" component={SignUpScreen} />
-        <Tab.Screen name="SignInScreen" component={SignInScreen} />
-      </Tab.Navigator>
+    <Tab.Navigator>
+      <Tab.Screen name="SignUpScreen" component={SignUpScreen} />
+      <Tab.Screen name="SignInScreen" component={SignInScreen} />
+    </Tab.Navigator>
   )
 }
 
-function SettingsScreen() {
+function TextOpt({ route, navigation }) {
+  const { info } = route.params;
+  alert(info[0].titulo);
+  return (
+    <>
+    {
+      info.map(
+        (texto) => {
+          return 
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <TouchableOpacity onPress={() => alert(texto.titulo)} style={styles.roundButton1}>
+                <Text style={styles.sectionButtonText}>{texto.paragrafo1}</Text>
+              </TouchableOpacity>
+            </View>
+        }
+      )
+    }
+      
+    </>
+  );
+}
+function TextSpec() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
+      <Text>placeholder</Text>
     </View>
   );
 }
@@ -213,13 +223,10 @@ function SettingsScreen() {
 function HomeScreen({ navigation }) {
   const [ inst, setInst ] = useState("");
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Instrumento: </Text>
-
-      <Button
-        title="Pesquisar"
-        onPress={() => Serch(inst)}
-      />
+    <View style={styles.sectionAlign}>
+      <TouchableOpacity onPress={() => search({ navigation })} style={styles.roundButton1}>
+        <Text style={styles.sectionButtonText}>Aulas textuais</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -263,17 +270,6 @@ function SignInScreen({ navigation }) {
         </View>
       </View>
     </View>
-  );
-}
- 
-function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="SignPage">
-        <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }}/>
-        <Stack.Screen name="SignPage" component={SignPage} options={{ headerShown: false }}/>
-      </Stack.Navigator>
-    </NavigationContainer>
   );
 }
 
