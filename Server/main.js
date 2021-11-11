@@ -73,10 +73,6 @@ router.get("/getUsers", (req, res) =>
     executeSQL(`select * from tcc_Usuarios`, res)
 );
 
-router.get("/getTxts", (req, res) => 
-    executeSQL(`select * from tcc_Txt`, res)
-);
-
 router.post('/addUsersInfo', (req, res) => {
     let nome = req.body.nome;
     let idade = req.body.idade;
