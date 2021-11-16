@@ -7,6 +7,11 @@ ocupacao varchar(100),
 educacaoMusical varchar(100) not null,
 tocaInstrumento varchar (100))
 
+
+create table tcc_Vid(
+id int primary key identity,
+titulo varchar(100) not null,
+link varchar(100) not null)
 select * from tcc_infoQuestionados
 
 create table tcc_respostasCores(
@@ -56,13 +61,75 @@ constraint fk_idInfoQuestionado foreign key(idInfo) references tcc_infoQuestiona
 select * from tcc_respostasCores
 
 create table tcc_Usuarios (
-    id int primary key identity,
     nome varchar(100) not null,
 	idade int not null,
-	email varchar(100) not null,
-	educacao varchar(100) not null,
-	toca varchar(100) not null,
+	email varchar(100) primary key,
 	senha varchar(100) not null
 )
 
-select * from tcc_Usuarios
+create table tcc_Txt(
+	id int primary key identity,
+	titulo varchar(100) not null,
+	paragrafo1 varchar(500) not null,
+	paragrafo2 varchar(500),
+	paragrafo3 varchar(500),
+	paragrafo4 varchar(500)
+)
+
+select * from tcc_Txt
+
+insert into tcc_Txt values ('teoria musical', 'teste', 'teste', 'teste', 'teste')
+
+drop table tcc_Txt
+
+create table tcc_Form5Questoes (
+	id int primary key identity,
+	descricao varchar(100) not null,
+	email varchar(100) not null,
+	pergunta1 varchar(100) not null,
+	pergunta2 varchar(100) not null,
+	pergunta3 varchar(100) not null,
+	pergunta4 varchar(100) not null,
+	pergunta5 varchar(100) not null
+)
+
+create table tcc_Resposta5Questoes (
+	id int primary key identity,
+	email varchar(100) not null,
+	resp1 varchar(100) not null,
+	resp2 varchar(100) not null,
+	resp3 varchar(100) not null,
+	resp4 varchar(100) not null,
+	resp5 varchar(100) not null
+)
+
+create table tcc_Form10Questoes (
+	id int primary key identity,
+	descricao varchar(100) not null,
+	email varchar(100) not null,
+	pergunta1 varchar(100) not null,
+	pergunta2 varchar(100) not null,
+	pergunta3 varchar(100) not null,
+	pergunta4 varchar(100) not null,
+	pergunta5 varchar(100) not null,
+	pergunta6 varchar(100) not null,
+	pergunta7 varchar(100) not null,
+	pergunta8 varchar(100) not null,
+	pergunta9 varchar(100) not null,
+	pergunta10 varchar(100) not null
+)
+
+create table tcc_Resposta10Questoes (
+	id int primary key identity,
+	email varchar(100) not null,
+	resp1 varchar(100) not null,
+	resp2 varchar(100) not null,
+	resp3 varchar(100) not null,
+	resp4 varchar(100) not null,
+	resp5 varchar(100) not null,
+	resp6 varchar(100) not null,
+	resp7 varchar(100) not null,
+	resp8 varchar(100) not null,
+	resp9 varchar(100) not null,
+	resp10 varchar(100) not null
+	constraint fk_emailInfoQuestionado foreign key(email) references tcc_Usuarios(email))

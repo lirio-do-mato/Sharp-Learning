@@ -40,6 +40,13 @@ app.use("/", router);
 app.listen(port);
 console.log("teste");
 
+const executeSQL = (sql, res) => {
+    global.conn.request()
+        .query(sql)
+        .then(result => res.json(result.recordset))
+        .catch(err => res.json(err));
+};
+
 function executeQuery(sql, res) {
     global.conn
       .request()
@@ -59,7 +66,23 @@ function executeQuery(sql, res) {
 };
 
 router.get("/teste", (req, res) => 
-    executeQuery(`select * from Paciente`, res)
+    executeSQL(`select * from Paciente`, res)
+);
+
+router.get("/getUsers", (req, res) => 
+    executeSQL(`select * from tcc_Usuarios`, res)
+);
+
+router.get("/getTxts", (req, res) => 
+    executeSQL(`select * from tcc_Txt`, res)
+);
+
+router.get("/getVids", (req, res) => 
+    executeSQL(`select * from tcc_Vid`, res)
+);
+
+router.get("/getForms", (req, res) => 
+    executeSQL(`select * from tcc_FormAval`, res)
 );
 
 router.post('/addUsersInfo', (req, res) => {
@@ -117,14 +140,28 @@ router.post('/answerColors', (req, res) => {
 });
 
 router.post('/addUsers', (req, res) => {
-    console.log("entrou");
     const nome = req.body.nome;
     const idade = req.body.idade;
     const email = req.body.email;
-    const educacao = req.body.educacao;
-    const toca = req.body.toca;
     const senha = req.body.senha;
-    executeQuery(`INSERT INTO tcc_Usuarios VALUES('${nome}', '${idade}', '${email}', '${educacao}', '${toca}', '${senha}')`, res);
+    executeQuery(`INSERT INTO tcc_Usuarios VALUES('${nome}', '${idade}', '${email}', '${senha}')`, res);
+});
+
+router.post('/addAnswerAval', (req, res) => {
+    const email = req.body.email;
+    const resp1 = req.body.resp1;
+    const resp2 = req.body.resp2;
+    const resp3 = req.body.resp3;
+    const resp4 = req.body.resp4;
+    const resp5 = req.body.resp5;
+    const resp6 = req.body.resp6;
+    const resp7 = req.body.resp7;
+    const resp8 = req.body.resp8;
+    const resp9 = req.body.resp9;
+    const resp10 = req.body.resp10;
+    const resp11 = req.body.resp11;
+    const resp12 = req.body.resp12;
+    executeQuery(`INSERT INTO tcc_RespAval VALUES('${email}','${resp1}', '${resp2}', '${resp3}', '${resp4}','${resp5}', '${resp6}', '${resp7}', '${resp8}','${resp9}', '${resp10}', '${resp11}', '${resp12}')`, res);
 });
 
 app.use("/", router);
