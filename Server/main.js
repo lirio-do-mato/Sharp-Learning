@@ -65,10 +65,6 @@ function executeQuery(sql, res) {
       .catch(e => res.json(e));
 };
 
-router.get("/teste", (req, res) => 
-    executeSQL(`select * from Paciente`, res)
-);
-
 router.get("/getUsers", (req, res) => 
     executeSQL(`select * from tcc_Usuarios`, res)
 );
@@ -84,6 +80,16 @@ router.get("/getVids", (req, res) =>
 router.get("/getForms", (req, res) => 
     executeSQL(`select * from tcc_FormAval`, res)
 );
+
+router.get("/getNotas", (req, res) => 
+    executeSQL(`select * from tcc_NotasAval`, res)
+);
+
+router.post("/setAula", (req, res) => {
+    const email = req.body.email;
+    const ultimaAula = req.body.ultimaAula;
+    executeQuery(`update tcc_Usuarios set ultimaAula = '${ultimaAula}' where email = '${email}'`, res);
+});
 
 router.post('/addUsersInfo', (req, res) => {
     let nome = req.body.nome;
@@ -144,11 +150,13 @@ router.post('/addUsers', (req, res) => {
     const idade = req.body.idade;
     const email = req.body.email;
     const senha = req.body.senha;
-    executeQuery(`INSERT INTO tcc_Usuarios VALUES('${nome}', '${idade}', '${email}', '${senha}')`, res);
+    const ultimaAula = 0;
+    executeQuery(`INSERT INTO tcc_Usuarios VALUES('${nome}', '${idade}', '${email}', '${senha}', '${ultimaAula}')`, res);
 });
 
 router.post('/addAnswerAval', (req, res) => {
     const email = req.body.email;
+    const id = req.body.id;
     const resp1 = req.body.resp1;
     const resp2 = req.body.resp2;
     const resp3 = req.body.resp3;
@@ -161,7 +169,7 @@ router.post('/addAnswerAval', (req, res) => {
     const resp10 = req.body.resp10;
     const resp11 = req.body.resp11;
     const resp12 = req.body.resp12;
-    executeQuery(`INSERT INTO tcc_RespAval VALUES('${email}','${resp1}', '${resp2}', '${resp3}', '${resp4}','${resp5}', '${resp6}', '${resp7}', '${resp8}','${resp9}', '${resp10}', '${resp11}', '${resp12}')`, res);
+    executeQuery(`INSERT INTO tcc_RespAval VALUES('${email}','${id}','${resp1}', '${resp2}', '${resp3}', '${resp4}','${resp5}', '${resp6}', '${resp7}', '${resp8}','${resp9}', '${resp10}', '${resp11}', '${resp12}')`, res);
 });
 
 app.use("/", router);
