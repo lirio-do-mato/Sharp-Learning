@@ -219,7 +219,7 @@ function SignIn({ navigation },email, senha) {
       alert("Preencha a sua senha");
     else
     {
-      fetch('http://192.168.15.44:3001/getUsers', { //ip da maquina que roda o server
+      fetch('http://143.106.203.155:3001/getUsers', { //ip da maquina que roda o server
         method: 'get',
         headers: {'Content-Type': 'application/json'},
       })
@@ -304,20 +304,17 @@ function searchVid({ navigation }, ultimaAula, email){
   })
   .then(res => res.json())
   .then(data => {
+    alert(ultimaAula);
     var ret = [data.length];
-    var cont = 0;
-    var i = 1;
-    for(; i < data.length; i++)
+    for(var i = 0; i < data.length; i++)
     {
-      if(i < ultimaAula+2)
+      if(data[i].id <= ultimaAula)
       {
-        ret[cont]={titulo:data[i].titulo, link:data[i].likn, disabled: false, i: i, ultimaAula: ultimaAula, email: email};
-        cont++;
+        ret[i]={titulo:data[i].titulo, link:data[i].link, disabled: false, i: i+1, ultimaAula: ultimaAula, email: email};
       }
       else
       {
-        ret[cont]={titulo:data[i].titulo, link:data[i].likn, disabled: true, i: i, ultimaAula: ultimaAula};
-        cont++;
+        ret[i]={titulo:data[i].titulo, link:data[i].link, disabled: true, i: i+1, ultimaAula: ultimaAula};
       } 
     }
     navigation.navigate('VidMain', {info: ret})
@@ -679,7 +676,7 @@ function VidSpec({ route, navigation }) {
   const i = route.params.info.i;
   const ultimaAula = route.params.info.ultimaAula;
   const email = route.params.info.email;
-  if(i > ultimaAula)
+  if(i >= ultimaAula)
     updateAula(email, ultimaAula+1);
   return (
     <View style={{flex: 1}}>
@@ -692,7 +689,6 @@ function VidSpec({ route, navigation }) {
     </View>
   );
 }
-
 function HomeScreen({ route, navigation }) {
   React.useEffect(() => navigation.addListener('beforeRemove', (e) => {
     e.preventDefault();
