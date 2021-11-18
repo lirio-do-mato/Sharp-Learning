@@ -64,6 +64,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#D0C3F1'  
   },
+  contentBtn:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#17131c'
+  },
   home:{ //css da pagina principal
     padding:50,
     flex: 1,
@@ -138,7 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: 'League Spartan Bold',
     borderRadius: 5,
-    width: 270
+    width: 250
   },
   textMain:{
     margin: 7,
@@ -717,7 +722,7 @@ function HomeScreen({ route, navigation }) {
     </View>
   );
 }
- 
+
 function SignUpScreen({ navigation }) {
   const [nome, setNome] = useState('');
   const [idade, setIdade] = useState('');
@@ -725,15 +730,15 @@ function SignUpScreen({ navigation }) {
   const [senha, setSenha] = useState('');
   const [senha2, setSenha2] = useState('');
   return (
-    <View style={styles.textMain}>
-      <View style={{backgroundColor:'#17131c', flex: 1}}>
-      <Text style={styles.tituloHome}>Sharp Learning</Text>
+    <View style={{backgroundColor:'#17131c', flex: 1}}>
+      <View style={styles.textMain}>
+        <Text style={styles.tituloHome}>Sharp Learning</Text>
         <TextInput style={styles.camposLogin} placeholder="Nome" onChangeText={nome => setNome(nome)} defaultValue={nome}/>
         <TextInput style={styles.camposLogin} placeholder="Idade" keyboardType="numeric" onChangeText={idade => setIdade(idade)} defaultValue={idade}/>
         <TextInput style={styles.camposLogin} placeholder="Email" onChangeText={email => setEmail(email)} defaultValue={email}/>
         <TextInput style={styles.camposLogin} name="senha" secureTextEntry={true} placeholder="Senha" onChangeText={senha => setSenha(senha)} defaultValue={senha}/>
         <TextInput style={styles.camposLogin} name="confirmeSenha" secureTextEntry={true} placeholder="Confirme a Senha" onChangeText={senha2 => setSenha2(senha2)} defaultValue={senha2}/>
-        <View style={styles.sectionAlign}>
+        <View style={styles.contentBtn}>
           <TouchableOpacity onPress={() => send({navigation}, nome, idade, email, senha, senha2)} style={styles.botaoLogin}>
             <Text style={styles.textoBotaoLogin}>Enviar</Text>
           </TouchableOpacity>
@@ -747,12 +752,12 @@ function SignInScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   return (
-    <View style={styles.textMain}>
-      <View style={{backgroundColor:'#17131c', flex: 1}}>
-        <Image source={require('./assets/images/Logo.png')}/>
+    <View style={{backgroundColor:'#17131c', flex: 1}}>
+      <View style={styles.textMain}>
+        <Image source={require('./assets/images/Logo.png')} style={{height: 250, width: 250}}/>
         <TextInput style={styles.camposLogin} placeholder="Email" onChangeText={email => setEmail(email)} defaultValue={email}/>
         <TextInput style={styles.camposLogin} name="senha" secureTextEntry={true} placeholder="Senha" onChangeText={senha => setSenha(senha)} defaultValue={senha}/>
-        <View style={styles.sectionAlign}>
+        <View style={styles.contentBtn}>
           <TouchableOpacity onPress={() => SignIn({ navigation },email, senha)} style={styles.botaoLogin}>
             <Text style={styles.textoBotaoLogin}>Enviar</Text>
           </TouchableOpacity>
